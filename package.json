@@ -1,24 +1,17 @@
 {
   "name": "youtube-downloader",
   "version": "1.0.0",
-  "description": "A simple YouTube video downloader server.",
+  "description": "A simple YouTube video and audio downloader",
   "main": "index.js",
   "scripts": {
     "start": "node index.js"
   },
   "dependencies": {
-    "compression": "^1.7.4",
     "cors": "^2.8.5",
-    "express": "^4.19.2",
-    "express-rate-limit": "^5.5.1",
-    "fb-video-downloader": "^1.0.3",
-    "instagram-scraper": "^1.0.6",
+    "express": "^4.17.1",
+    "express-rate-limit": "^5.2.6",
     "morgan": "^1.10.0",
     "node-cache": "^5.1.2",
-    "stream": "0.0.3",
-    "tiktok-scraper": "^1.4.36",
-    "ytdl-core": "^4.11.5"
-  },
-  "author": "leejones",
-  "license": "MIT"
+    "ytdl-core": "^4.9.1"
+  }
 }
