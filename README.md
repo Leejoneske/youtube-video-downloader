@@ -19,4 +19,4 @@ A simple YouTube video and audio downloader built with Node.js and Express.
 
 1. Clone the repository:
    ```sh
-   git clone https://github.com/your-username/your-repo.git
+   git clone https://github.com/Leejoneske/youtube-video-downloader/tree/main
