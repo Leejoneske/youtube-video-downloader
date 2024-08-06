@@ -38,60 +38,32 @@ const downloadMedia = async (url, type, res) => {
       return res.status(400).send('Invalid YouTube URL');
     }
 
-    const videoId = ytdl.getURLVideoID(url);
-    let videoInfo = cache.get(videoId);
+    const info = await ytdl.getInfo(url);
+    const format = ytdl.chooseFormat(info.formats, { quality: type });
 
-    if (!videoInfo) {
-      videoInfo = await ytdl.getInfo(url);
-      cache.set(videoId, videoInfo);
+    if (!format) {
+      return res.status(400).send('Format not found');
     }
 
-    const title = videoInfo.videoDetails.title.replace(/[^\x00-\x7F]/g, "");
-
-    const options = {
-      quality: type === 'mp3' ? 'highestaudio' : 'highestvideo',
-      filter: (format) => format.container === (type === 'mp3' ? 'mp3' : 'mp4'),
-    };
-
-    const stream = ytdl(url, options);
-
-    res.header('Content-Disposition', `attachment; filename="${title}.${type}"`);
-    res.header('Content-Type', type === 'mp3' ? 'audio/mpeg' : 'video/mp4');
-
-    pipeline(stream, res, (err) => {
+    res.header('Content-Disposition', `attachment; filename="${info.videoDetails.title}.${format.container}"`);
+    pipeline(ytdl(url, { format }), res, (err) => {
       if (err) {
-        console.error(`Error downloading ${type.toUpperCase()}:`, err);
-        if (!res.headersSent) {
-          res.status(500).send(`Error downloading ${type.toUpperCase()}: ${err.message}`);
-        }
+        console.error('Pipeline failed.', err);
       }
     });
-  } catch (err) {
-    console.error(`Error downloading ${type.toUpperCase()}:`, err);
-    if (err.statusCode === 429) {
-      res.status(429).send('Rate limit exceeded. Please try again later.');
-    } else if (err.statusCode === 403) {
-      res.status(403).send('Access forbidden. The server is refusing to fulfill the request.');
-    } else {
-      if (!res.headersSent) {
-        res.status(500).send(`Error downloading ${type.toUpperCase()}: ${err.message}`);
-      }
-    }
+  } catch (error) {
+    console.error('Error downloading media:', error);
+    res.status(500).send('Error downloading media');
   }
 };
 
-app.get('/downloadmp3', (req, res) => {
-  const url = req.query.url;
-  downloadMedia(url, 'mp3', res);
-});
+app.get('/download', async (req, res) => {
+  const { url, type } = req.query;
+  if (!url || !type) {
+    return res.status(400).send('URL and type are required');
+  }
 
-app.get('/downloadmp4', (req, res) => {
-  const url = req.query.url;
-  downloadMedia(url, 'mp4', res);
-});
-
-app.get('/', (req, res) => {
-  res.send('Welcome to the YouTube downloader server!');
+  await downloadMedia(url, type, res);
 });
 
 app.listen(PORT, () => {
