@@ -1,17 +1,25 @@
 {
   "name": "youtube-downloader",
   "version": "1.0.0",
-  "description": "A simple YouTube video and audio downloader",
+  "description": "A server for downloading YouTube content in various formats",
   "main": "index.js",
   "scripts": {
-    "start": "node index.js"
+    "start": "node index.js",
+    "dev": "nodemon index.js"
   },
   "dependencies": {
-    "cors": "^2.8.5",
     "express": "^4.17.1",
-    "express-rate-limit": "^5.2.6",
-    "morgan": "^1.10.0",
-    "node-cache": "^5.1.2",
-    "ytdl-core": "^4.9.1"
-  }
+    "ytdl-core": "^4.11.0",
+    "fluent-ffmpeg": "^2.1.2",
+    "uuid": "^8.3.2",
+    "express-rate-limit": "^5.3.0"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.12"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  },
+  "author": "",
+  "license": "ISC"
 }
